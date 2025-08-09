@@ -263,4 +263,33 @@ function createMatrixBackground() {
 }
 
 // Uncomment to enable Matrix background effect
-// createMatrixBackground();
+ createMatrixBackground();
+function typewriterEffect(element, text, speed = 20) {
+  let i = 0;
+  element.innerHTML = '';
+  
+  function type() {
+    if (i < text.length) {
+      element.innerHTML += text.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    }
+  }
+  
+  type();
+}
+
+// Then modify the openModal function to use it:
+function openModal(title, content) {
+  const modal = document.getElementById('fileModal');
+  const modalBody = document.getElementById('modalBody');
+  
+  document.querySelector('.modal-title').textContent = title;
+  modalBody.innerHTML = '<div class="file-content"></div>';
+  modal.style.display = 'block';
+  
+  const contentElement = modalBody.querySelector('.file-content');
+  typewriterEffect(contentElement, content);
+  
+  document.addEventListener('keydown', handleEscapeKey);
+}
