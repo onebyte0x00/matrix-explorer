@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix File Explorer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="matrix-container">
+        <div class="terminal">
+            <div class="terminal-header">
+                <span class="title">MATRIX://FILE_SYSTEM</span>
+                <div class="controls">
+                    <span class="control close"></span>
+                    <span class="control minimize"></span>
+                    <span class="control maximize"></span>
+                </div>
+            </div>
+            <div class="terminal-body">
+                <div class="path-display">root@matrix:~$</div>
+                <div class="command-line">
+                    <span class="prompt">></span>
+                    <input type="text" class="command-input" autofocus>
+                </div>
+                <div class="file-display" id="fileDisplay">
+                    <!-- Files will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
