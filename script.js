@@ -1,15 +1,24 @@
-// Sample file data (you can replace this with actual API calls)
-const fileData = {
-    "path": "/",
-    "files": [
-        {"name": "documents", "type": "directory", "size": "-", "modified": "2023-10-15"},
-        {"name": "images", "type": "directory", "size": "-", "modified": "2023-10-14"},
-        {"name": "system", "type": "directory", "size": "-", "modified": "2023-10-10"},
-        {"name": "readme.txt", "type": "file", "size": "2.4KB", "modified": "2023-10-12"},
-        {"name": "access_codes.log", "type": "file", "size": "1.2MB", "modified": "2023-10-16"}
-    ]
-};
+ 
+let fileData = {};
 
+// Load the JSON file
+fetch('data/files.json')
+  .then(response => response.json())
+  .then(data => {
+    fileData = data;
+    displayFiles(fileData.files);
+  })
+  .catch(error => {
+    console.error('Error loading files.json:', error);
+    // Fallback to default data
+    fileData = {
+      path: "/",
+      files: [
+        {name: "Error loading files", type: "file", size: "-", modified: ""}
+      ]
+    };
+    displayFiles(fileData.files);
+  });
 // DOM elements
 const fileDisplay = document.getElementById('fileDisplay');
 const commandInput = document.querySelector('.command-input');
