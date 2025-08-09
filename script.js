@@ -2,7 +2,68 @@
 let currentPath = '/';
 let pathHistory = [];
 let fileSystem = {};
+// Matrix rain effect
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize both canvases
+  initMatrixRain('leftMatrix');
+  initMatrixRain('rightMatrix');
+});
 
+function initMatrixRain(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  
+  // Set canvas size
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  
+  // Matrix characters - Katakana, Latin, and symbols
+  const matrixChars = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz#$%&()*+-/<=>?@[\\]^_{|}~';
+  
+  const fontSize = 14;
+  const columns = canvas.width / fontSize;
+  
+  // Set up drops
+  const drops = [];
+  for (let i = 0; i < columns; i++) {
+    drops[i] = Math.random() * -100; // Start at random positions above viewport
+  }
+  
+  // Draw function
+  function draw() {
+    // Semi-transparent black background
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Green text
+    ctx.fillStyle = '#0f0';
+    ctx.font = `${fontSize}px monospace`;
+    
+    for (let i = 0; i < drops.length; i++) {
+      const text = matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
+      
+      // Draw character
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      
+      // Reset drop to top when it reaches bottom with random delay
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      
+      // Increment Y coordinate
+      drops[i]++;
+    }
+  }
+  
+  // Adjust for window resize
+  window.addEventListener('resize', () => {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  });
+  
+  // Start animation
+  setInterval(draw, 35);
+}
 // DOM elements
 const fileDisplay = document.getElementById('fileDisplay');
 const commandInput = document.querySelector('.command-input');
