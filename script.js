@@ -1,99 +1,148 @@
- 
-let fileData = {};
+// Global variables
+let currentPath = '/';
+let pathHistory = [];
+let fileSystem = {};
 
-// Load the JSON file
-fetch('data/files.json')
-  .then(response => response.json())
-  .then(data => {
-    fileData = data;
-    displayFiles(fileData.files);
-  })
-  .catch(error => {
-    console.error('Error loading files.json:', error);
-    // Fallback to default data
-    fileData = {
-      path: "/",
-      files: [
-        {name: "Error loading files", type: "file", size: "-", modified: ""}
-      ]
-    };
-    displayFiles(fileData.files);
-  });
 // DOM elements
 const fileDisplay = document.getElementById('fileDisplay');
 const commandInput = document.querySelector('.command-input');
+const pathDisplay = document.querySelector('.path-display');
 
 // Initialize
-displayFiles(fileData.files);
+fetch('data/files.json')
+  .then(response => response.json())
+  .then(data => {
+    fileSystem = data;
+    navigateTo(currentPath);
+  })
+  .catch(error => {
+    console.error('Error loading files.json:', error);
+    fileDisplay.innerHTML = '<div class="error">Error loading file system</div>';
+  });
 
-// Event listeners
-commandInput.addEventListener('keydown', handleCommand);
-
-function displayFiles(files) {
-    fileDisplay.innerHTML = '';
-    
-    files.forEach(file => {
-        const fileItem = document.createElement('div');
-        fileItem.className = 'file-item';
-        
-        const icon = document.createElement('span');
-        icon.className = 'file-icon';
-        icon.innerHTML = file.type === 'directory' ? '📁' : '📄';
-        
-        const name = document.createElement('span');
-        name.textContent = file.name;
-        
-        fileItem.appendChild(icon);
-        fileItem.appendChild(name);
-        
-        if (file.type === 'directory') {
-            fileItem.addEventListener('click', () => {
-                // In a real app, you would navigate to the directory
-                commandInput.value = `cd ${file.name}`;
-                simulateTyping(`Accessing directory: ${file.name}...`);
-            });
-        } else {
-            fileItem.addEventListener('click', () => {
-                commandInput.value = `open ${file.name}`;
-                simulateTyping(`Opening file: ${file.name}...`);
-            });
-        }
-        
-        fileDisplay.appendChild(fileItem);
-    });
-}
-
-function handleCommand(e) {
-    if (e.key === 'Enter') {
-        const command = commandInput.value.trim();
-        commandInput.value = '';
-        
-        if (command) {
-            addCommandOutput(`> ${command}`);
-            processCommand(command);
-        }
-    }
-}
-
-function processCommand(command) {
-    // Simple command processing
-    if (command === 'help' || command === '?') {
-        addCommandOutput('Available commands: ls, cd [dir], open [file], clear, help');
-    } else if (command === 'clear') {
-        clearTerminal();
-    } else if (command === 'ls') {
-        displayFiles(fileData.files);
-    } else if (command.startsWith('cd ')) {
-        const dir = command.substring(3);
-        addCommandOutput(`Changing directory to: ${dir}...`);
-        // In a real app, you would change directories here
-    } else if (command.startsWith('open ')) {
-        const file = command.substring(5);
-        addCommandOutput(`Opening file: ${file}...`);
+// Navigation function
+function navigateTo(path) {
+  const parts = path.split('/').filter(part => part !== '');
+  let current = fileSystem;
+  
+  for (const part of parts) {
+    if (part === '') continue;
+    const found = current.files.find(item => item.name === part && item.type === 'directory');
+    if (found) {
+      current = found;
     } else {
-        addCommandOutput(`Command not found: ${command}. Type 'help' for available commands.`);
+      addCommandOutput(`Directory not found: ${part}`);
+      return;
     }
+  }
+  
+  currentPath = path;
+  pathDisplay.textContent = `root@matrix:${currentPath === '/' ? '~' : currentPath}$`;
+  displayFiles(current.files);
+  pathHistory.push(currentPath);
 }
+
+// Updated displayFiles function
+function displayFiles(files) {
+  fileDisplay.innerHTML = '';
+  
+  // Add ".." for parent directory (except root)
+  if (currentPath !== '/') {
+    const parentItem = document.createElement('div');
+    parentItem.className = 'file-item';
+    
+    const icon = document.createElement('span');
+    icon.className = 'file-icon';
+    icon.textContent = '⬆';
+    
+    const name = document.createElement('span');
+    name.textContent = '.. (parent)';
+    
+    parentItem.appendChild(icon);
+    parentItem.appendChild(name);
+    
+    parentItem.addEventListener('click', () => {
+      const parentPath = currentPath.split('/').slice(0, -1).join('/') || '/';
+      navigateTo(parentPath);
+    });
+    
+    fileDisplay.appendChild(parentItem);
+  }
+  
+  files.forEach(file => {
+    const fileItem = document.createElement('div');
+    fileItem.className = 'file-item';
+    
+    const icon = document.createElement('span');
+    icon.className = 'file-icon';
+    icon.textContent = file.type === 'directory' ? '📁' : '📄';
+    
+    const name = document.createElement('span');
+    name.textContent = file.name;
+    
+    // Add file info (optional)
+    const info = document.createElement('span');
+    info.className = 'file-info';
+    info.textContent = `${file.size} | ${file.modified}`;
+    
+    fileItem.appendChild(icon);
+    fileItem.appendChild(name);
+    fileItem.appendChild(info);
+    
+    if (file.type === 'directory') {
+      fileItem.addEventListener('click', () => {
+        const newPath = currentPath === '/' ? 
+          `/${file.name}` : 
+          `${currentPath}/${file.name}`;
+        navigateTo(newPath);
+      });
+    } else {
+      fileItem.addEventListener('click', () => {
+        addCommandOutput(`Opening file: ${file.name}...`);
+        // Add file opening logic here
+      });
+    }
+    
+    fileDisplay.appendChild(fileItem);
+  });
+}
+
+// Update command processing for cd command
+function processCommand(command) {
+  if (command === 'help' || command === '?') {
+    addCommandOutput('Available commands: ls, cd [dir], open [file], clear, help, back');
+  } else if (command === 'clear') {
+    clearTerminal();
+  } else if (command === 'ls') {
+    // Already showing current directory contents
+  } else if (command.startsWith('cd ')) {
+    const dir = command.substring(3).trim();
+    if (dir === '..') {
+      const parentPath = currentPath.split('/').slice(0, -1).join('/') || '/';
+      navigateTo(parentPath);
+    } else if (dir === '/') {
+      navigateTo('/');
+    } else {
+      const newPath = currentPath === '/' ? 
+        `/${dir}` : 
+        `${currentPath}/${dir}`;
+      navigateTo(newPath);
+    }
+  } else if (command === 'back') {
+    if (pathHistory.length > 1) {
+      pathHistory.pop(); // Remove current path
+      const prevPath = pathHistory.pop(); // Get previous path
+      navigateTo(prevPath);
+    }
+  } else if (command.startsWith('open ')) {
+    const file = command.substring(5);
+    addCommandOutput(`Opening file: ${file}...`);
+  } else {
+    addCommandOutput(`Command not found: ${command}. Type 'help' for available commands.`);
+  }
+}
+
+// Rest of your existing functions (addCommandOutput, clearTerminal, etc.)
 
 function addCommandOutput(text) {
     const output = document.createElement('div');
