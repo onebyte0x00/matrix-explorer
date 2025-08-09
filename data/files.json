@@ -1,0 +1,35 @@
+{
+  "path": "/",
+  "files": [
+    {
+      "name": "documents",
+      "type": "directory",
+      "size": "-",
+      "modified": "2023-10-15"
+    },
+    {
+      "name": "images",
+      "type": "directory",
+      "size": "-",
+      "modified": "2023-10-14"
+    },
+    {
+      "name": "system",
+      "type": "directory",
+      "size": "-",
+      "modified": "2023-10-10"
+    },
+    {
+      "name": "readme.txt",
+      "type": "file",
+      "size": "2.4KB",
+      "modified": "2023-10-12"
+    },
+    {
+      "name": "access_codes.log",
+      "type": "file",
+      "size": "1.2MB",
+      "modified": "2023-10-16"
+    }
+  ]
+}
