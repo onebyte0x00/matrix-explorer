@@ -5,31 +5,85 @@
       "name": "documents",
       "type": "directory",
       "size": "-",
-      "modified": "2023-10-15"
-    },
-    {
-      "name": "images",
-      "type": "directory",
-      "size": "-",
-      "modified": "2023-10-14"
+      "modified": "2023-10-15",
+      "contents": [
+        {
+          "name": "work",
+          "type": "directory",
+          "size": "-",
+          "modified": "2023-10-14",
+          "contents": [
+            {
+              "name": "project_alpha.txt",
+              "type": "file",
+              "size": "45KB",
+              "modified": "2023-10-13"
+            },
+            {
+              "name": "meeting_notes.log",
+              "type": "file",
+              "size": "12KB",
+              "modified": "2023-10-12"
+            }
+          ]
+        },
+        {
+          "name": "personal",
+          "type": "directory",
+          "size": "-",
+          "modified": "2023-10-10",
+          "contents": [
+            {
+              "name": "journal.enc",
+              "type": "file",
+              "size": "8KB",
+              "modified": "2023-10-09"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "system",
       "type": "directory",
       "size": "-",
-      "modified": "2023-10-10"
+      "modified": "2023-10-10",
+      "contents": [
+        {
+          "name": "config",
+          "type": "directory",
+          "size": "-",
+          "modified": "2023-10-08",
+          "contents": [
+            {
+              "name": "settings.cfg",
+              "type": "file",
+              "size": "2KB",
+              "modified": "2023-10-07"
+            }
+          ]
+        },
+        {
+          "name": "logs",
+          "type": "directory",
+          "size": "-",
+          "modified": "2023-10-06",
+          "contents": [
+            {
+              "name": "system.log",
+              "type": "file",
+              "size": "1.4MB",
+              "modified": "2023-10-05"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "readme.txt",
       "type": "file",
       "size": "2.4KB",
       "modified": "2023-10-12"
-    },
-    {
-      "name": "access_codes.log",
-      "type": "file",
-      "size": "1.2MB",
-      "modified": "2023-10-16"
     }
   ]
 }
